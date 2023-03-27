@@ -1,0 +1,27 @@
+{% extends '../base.html' %}
+{% block title %}Company{% endblock %}
+{% block register_login %}
+<ul class="navbar-nav">
+  {% if cadmin.is_authenticated %}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'cadmin:logout' %}"
+      >Logout</a
+    >
+  </li>
+  <li class="nav-item" style="color: white">
+    Hi {{ cadmin.cadmin.c_name }}
+  </li>
+  {% else %}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'cadmin:register' %}"
+      >Register</a
+    >
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'cadmin:login' %}"
+      >Login </a
+    >
+  </li>
+  {% endif %}
+</ul>
+{% endblock %}
