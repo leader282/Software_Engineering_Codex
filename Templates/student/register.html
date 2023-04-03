@@ -36,6 +36,24 @@
                   Student Registration
                 </h3>
 
+                {% if e1 %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <strong>Error!</strong> Please check in the credentials again!!
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                {% endif %}
+
+                {% if e2 %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <strong>Alert!</strong> Password and Confirm passwords donot match!!
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                {% endif %}
+
                 <form class="px-md-2" method="post">
                   {% csrf_token %}
                   <div class="form-outline mb-4">

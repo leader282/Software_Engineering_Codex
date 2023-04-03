@@ -6,6 +6,11 @@
   <li class="nav-item">
     <a class="nav-link" href="{% url 'student:logout' %}">Logout</a>
   </li>
+  <li>
+    <a class="nav-link" href="{% url 'student:notif' %}">
+      <i class="fa fa-bell" style="color: white"></i>
+    </a>
+  </li>
   {% else %}
   <li class="nav-item">
     <a class="nav-link" href="{% url 'student:register' %}">Register</a>

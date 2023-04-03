@@ -11,50 +11,53 @@ PROFILE_CHOICES = {'s':'SOFTWARE', 'd': 'DATA', 'f':'FINANCE', 'q':'QUANT'}
 # Create your views here.
 
 def home(request):
-    student = User.objects.filter(username=request.session['username'])[0]
-
-    if request.method == 'POST':
-        if len(request.FILES) > 0:
-            cv = request.FILES['cv']
-            student.student.cv = cv
-            student.save()
-            student.student.save()
-        try:
-            c_apply = request.POST['c_apply']
-            company = Cadmin.objects.filter(c_name = c_apply)[0]
-            company.students.add(student.student)
-            company.save()
-        except:
-            pass
-        try:
-            alumni = request.POST['a_apply']
-            print(alumni.a_name)
-        except:
-            pass
-          
-    company_list = Cadmin.objects.all()
-    for company in company_list:
-        company.c_profile = PROFILE_CHOICES[company.c_profile]
-
-    alumni_list = Alumni.objects.all()
-    for alumni in alumni_list:
-        alumni.a_profile = PROFILE_CHOICES[alumni.a_profile]
-
     try:
-        feedback = Feedback.objects.filter(student=student.student)[0]
+        student = User.objects.filter(username=request.session['username'])[0]
+
+        if request.method == 'POST':
+            if len(request.FILES) > 0:
+                cv = request.FILES['cv']
+                student.student.cv = cv
+                student.save()
+                student.student.save()
+            try:
+                c_apply = request.POST['c_apply']
+                company = Cadmin.objects.filter(c_name = c_apply)[0]
+                company.students.add(student.student)
+                company.save()
+            except:
+                pass
+            try:
+                alumni = request.POST['a_apply']
+                
+            except:
+                pass
+            
+        company_list = Cadmin.objects.all()
+        for company in company_list:
+            company.c_profile = PROFILE_CHOICES[company.c_profile]
+
+        alumni_list = Alumni.objects.all()
+        for alumni in alumni_list:
+            alumni.a_profile = PROFILE_CHOICES[alumni.a_profile]
+
+        try:
+            feedback = Feedback.objects.filter(student=student.student)[0]
+        except:
+            feedback = ""
+
+        cv = student.student.cv
+
+        context = {
+            'student' : student,
+            'cv_path' : os.path.join(settings.BASE_DIR, '/media/')+cv.name,
+            'company_list' : company_list,
+            'alumni_list' : alumni_list,
+            'feedback' : feedback
+        }
+        return render(request, "student/index.html", context=context)
     except:
-        feedback = ""
-
-    cv = student.student.cv
-
-    context = {
-        'student' : student,
-        'cv_path' : os.path.join(settings.BASE_DIR, '/media/')+cv.name,
-        'company_list' : company_list,
-        'alumni_list' : alumni_list,
-        'feedback' : feedback
-    }
-    return render(request, "student/index.html", context=context)
+        return render(request, "student/index.html")
 
 def register_view(request):
     if request.method == "POST":
@@ -64,6 +67,9 @@ def register_view(request):
         phone = request.POST['phone']
         password = request.POST['password']
         cpassword = request.POST['cpassword']
+
+        if(password != cpassword):
+            return render(request, "student/register.html", context={'e2' : True})
 
         new_user = User.objects.create(username=roll)
         new_user.set_password(password)
@@ -97,3 +103,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('/')
+
+def notif_view(request):
+    return render(request, "student/notification.html")
