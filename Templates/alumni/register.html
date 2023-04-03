@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Login</title>
+    <title>Alumni Registration</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
@@ -17,7 +17,7 @@
     />
   </head>
   <body>
-    <section class="h-custom" style="background-color: #8fc4b7; height: 100vh;">
+    <section class="h-100 h-custom" style="background-color: #8fc4b7">
       <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
           <div class="col-lg-8 col-xl-6">
@@ -33,20 +33,64 @@
               />
               <div class="card-body p-4 p-md-5">
                 <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 px-md-2">
-                  Student Login
+                  Alumni Registration
                 </h3>
 
                 <form class="px-md-2" method="post">
                   {% csrf_token %}
                   <div class="form-outline mb-4">
-                    <label for="roll">Roll Number:</label>
+                    <label for="name">Alumni Name:</label>
+                    <input
+                      type="text"
+                      id="name"
+                      class="form-control"
+                      placeholder="John Smith"
+                      name="a_name"
+                      required
+                    />
+                  </div>
+
+                  <div class="form-outline mb-4">
+                    <label for="email">Alumni Email:</label>
+                    <input
+                      type="email"
+                      id="email"
+                      class="form-control"
+                      placeholder="johnsmith@gmail.com"
+                      name="a_email"
+                      required
+                    />
+                  </div>
+
+                  <div class="form-outline mb-4">
+                    <label for="roll">Alumni ID:</label>
                     <input
                       type="text"
                       id="roll"
                       class="form-control"
                       placeholder="21CS10009"
-                      name="roll"
+                      name="a_id"
                       required
+                    />
+                  </div>
+
+                  <div class="form-outline mb-4">
+                    <label>Job Profile Options</label>
+                    <select class="form-control" value="Select" name="a_profile">
+                    {% for c_s, c_e in choices.items %}
+                        <option value={{c_s}}>{{c_e}}</option>
+                    {% endfor %}
+                    </select>
+                  </div>
+
+                  <div class="form-outline mb-4">
+                    <label for="phone">Contact Number:</label>
+                    <input
+                      type="number"
+                      id="phone"
+                      class="form-control"
+                      placeholder="9832144857"
+                      name="a_contactno"
                     />
                   </div>
 
@@ -62,11 +106,23 @@
                     />
                   </div>
 
+                  <div class="form-outline mb-4">
+                    <label for="cpassword">Confirm Password:</label>
+                    <input
+                      type="password"
+                      id="apassword"
+                      class="form-control"
+                      placeholder="confirm password"
+                      name="apassword"
+                      required
+                    />
+                  </div>
+
                   <button type="submit" class="btn btn-success btn-lg mb-1">
                     Submit
                   </button>
 
-                  <p style="margin-top: 20px;">New here? Click here to <a href="{% url 'cadmin:register' %}" style="text-decoration: none">register</a></p>
+                  <p style="margin-top: 20px;">Already registered? Click here to <a href="{% url 'alumni:login' %}" style="text-decoration: none">login</a></p>
                 </form>
               </div>
             </div>

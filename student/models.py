@@ -8,7 +8,8 @@ class Student(models.Model):
     name=models.CharField(max_length=1000)
     email = models.EmailField(max_length=100)
     date_joined=models.DateTimeField(verbose_name="Date of Joining",auto_now_add=True, null=True) 
-    phone=models.IntegerField(blank=True,null=True)   
+    phone=models.IntegerField(blank=True,null=True)
+    cv = models.FileField(upload_to='files/')
     def __str__(self):
         return self.user.username
     def has_perm(self,perm,obj=None):

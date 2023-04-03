@@ -76,7 +76,7 @@
 
                   <div class="form-outline mb-4">
                     <label>Profile Options</label>
-                    <select class="form-control" value="Select">
+                    <select class="form-control" value="Select" name="c_profile">
                     {% for choice in choices %}
                         <option value={{choice.0}}>{{choice.1}}</option>
                     {% endfor %}
@@ -121,6 +121,8 @@
                   <button type="submit" class="btn btn-success btn-lg mb-1">
                     Submit
                   </button>
+
+                  <p style="margin-top: 20px;">Already registered? Click here to <a href="{% url 'cadmin:login' %}" style="text-decoration: none">login</a></p>
                 </form>
               </div>
             </div>

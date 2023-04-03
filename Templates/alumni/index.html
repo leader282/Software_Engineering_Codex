@@ -1,1 +1,118 @@
-{% extends '../base.html' %} {% block title %}Students{% endblock %}
+{% extends '../base.html' %}
+{% block title %}Alumni{% endblock %}
+{% block register_login %}
+<ul class="navbar-nav">
+  {% if alumni.is_authenticated %}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'alumni:logout' %}">Logout</a>
+  </li>
+  {% else %}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'alumni:register' %}">Register</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'alumni:login' %}">Login </a>
+  </li>
+  {% endif %}
+</ul>
+{% endblock %}
+{% block main_section %}
+{% if alumni.is_authenticated %}
+<section style="background-color: #eee">
+  <h1 style="text-align: center; padding-top: 50px">Alumni Details</h1>
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="card mb-4">
+          <div class="card-body text-center">
+            <img
+              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+              alt="avatar"
+              class="rounded-circle img-fluid"
+              style="width: 150px"
+            />
+            <h5 class="my-3">{{ alumni.alumni.a_name }}</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Alumni Name</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{ alumni.alumni.a_name }}</p>
+              </div>
+            </div>
+            <hr />
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Email</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{ alumni.alumni.a_email }}</p>
+              </div>
+            </div>
+            <hr />
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Phone</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{ alumni.alumni.a_contactno }}</p>
+              </div>
+            </div>
+            <hr />
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Profile</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{ alumni.alumni.a_profile }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section>
+  <h1 style="text-align: center; padding: 50px">Student Details</h1>
+  <div class="container mx-auto mt-4">
+    <div class="row">
+      {% for student in student_list %}
+      <div class="col-md-4 mb-4">
+        <div class="card" style="width: 23rem">
+          <img
+            src="https://i.imgur.com/ZTkt4I5.jpg"
+            class="card-img-top"
+            alt="..."
+          />
+          <div class="card-body">
+            <h5 class="card-title">{{ student.name }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ student.user.username }}</h6>
+            <p class="card-text">
+              Email : {{ student.email }}
+              <br>
+              {% if student.cv != "" %}
+              CV: Uploaded
+              <a href="{{cv_path}}{{ student.cv.name }}" target="_blank" style="margin-right: 20px; margin-left: 10px;">View CV</a>
+              <a href="{{cv_path}}{{ student.cv.name }}" download>Download CV</a>
+              {% else %}
+              CV : Not Uploaded
+              {% endif %}
+              <br>
+              Contact Number: {{ student.phone }}
+            </p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
