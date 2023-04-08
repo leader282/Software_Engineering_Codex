@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path, include
+from django.urls import path, include, reverse_lazy
+from django.views.generic.base import RedirectView
 from . import views
 
 app_name = "opigs"
@@ -30,5 +31,10 @@ urlpatterns = [
     path('', views.home, name="home"),
 ]
 
+admin.site.site_header  =  "Institute Admin"  
+admin.site.site_title  =  "Online Placement Information Gathering System | Institute Admin"
+admin.site.index_title  =  "Institute Admin"
+
 if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

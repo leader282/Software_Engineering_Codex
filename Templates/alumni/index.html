@@ -6,6 +6,9 @@
   <li class="nav-item">
     <a class="nav-link" href="{% url 'alumni:logout' %}">Logout</a>
   </li>
+  <li>
+    <a class="nav-link" href="{% url 'alumni:chats' %}">Chats</a>
+  </li>
   {% else %}
   <li class="nav-item">
     <a class="nav-link" href="{% url 'alumni:register' %}">Register</a>
@@ -18,20 +21,52 @@
 {% endblock %}
 {% block main_section %}
 {% if alumni.is_authenticated %}
-<section style="background-color: #eee">
+<section>
   <h1 style="text-align: center; padding-top: 50px">Alumni Details</h1>
   <div class="container py-5">
     <div class="row">
       <div class="col-lg-4">
         <div class="card mb-4">
           <div class="card-body text-center">
+            {% if not alumni.alumni.photo %}
             <img
               src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
               alt="avatar"
               class="rounded-circle img-fluid"
-              style="width: 150px"
+              style="width: 250px"
             />
+            {% else %}
+            <img
+              src={{ cv_path }}{{ alumni.alumni.photo.name }}
+              alt="avatar"
+              class="rounded-circle img-fluid"
+              style="width: 250px"
+            />
+            {% endif %}
             <h5 class="my-3">{{ alumni.alumni.a_name }}</h5>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#photoModal">Upload Image</button>
+            <!-- Modal for Photo -->
+            <div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-labelledby="photoModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="photoModalLabel">Upload Photo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form enctype="multipart/form-data" method="post">
+                      {% csrf_token %}
+                      <div class="form-group">
+                        <input type="file" id="photo" name="photo" />
+                      </div>
+                      <button type="submit" class="btn btn-primary">Save</button>
+                    </form>                    
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -51,20 +86,72 @@
               <div class="col-sm-3">
                 <p class="mb-0">Email</p>
               </div>
-              <div class="col-sm-9">
+              <div class="col-sm-5">
                 <p class="text-muted mb-0">{{ alumni.alumni.a_email }}</p>
+              </div>
+              <div class="col-sm-3">
+                <a href="" style="color: grey" data-toggle="modal" data-target="#emailModal"><i class="fas fa-edit"></i></a>
               </div>
             </div>
             <hr />
+            <!-- Modal for Email -->
+            <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="emailModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="emailModalLabel">Change Email</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form method="post">
+                      {% csrf_token %}
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">New Email address</label>
+                        <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter new email">
+                      </div>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>                    
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="row">
               <div class="col-sm-3">
                 <p class="mb-0">Phone</p>
               </div>
-              <div class="col-sm-9">
+              <div class="col-sm-5">
                 <p class="text-muted mb-0">{{ alumni.alumni.a_contactno }}</p>
+              </div>
+              <div class="col-sm-3">
+                <a href="" style="color: grey" data-toggle="modal" data-target="#phoneModal"><i class="fas fa-edit"></i></a>
               </div>
             </div>
             <hr />
+            <!-- Modal for Phone -->
+            <div class="modal fade" id="phoneModal" tabindex="-1" role="dialog" aria-labelledby="phoneModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="phoneModalLabel">Change Phone Number</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form method="post">
+                      {% csrf_token %}
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Phone Number</label>
+                        <input type="phone" class="form-control" id="phone" placeholder="Enter new phone number" name="phone">
+                      </div>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="row">
               <div class="col-sm-3">
                 <p class="mb-0">Profile</p>
@@ -86,11 +173,19 @@
       {% for student in student_list %}
       <div class="col-md-4 mb-4">
         <div class="card" style="width: 23rem">
+          {% if not student.photo %}
           <img
-            src="https://i.imgur.com/ZTkt4I5.jpg"
+            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
             class="card-img-top"
             alt="..."
           />
+          {% else %}
+          <img
+            src={{ cv_path }}{{ student.photo.name }}
+            class="card-img-top"
+            alt="..."
+          />
+          {% endif %}
           <div class="card-body">
             <h5 class="card-title">{{ student.name }}</h5>
             <h6 class="card-subtitle mb-2 text-muted">{{ student.user.username }}</h6>

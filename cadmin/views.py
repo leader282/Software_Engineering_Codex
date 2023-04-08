@@ -16,11 +16,75 @@ def home(request):
     student_list = cadmin.cadmin.students.all()
 
     tempc_admin = cadmin
-    tempc_admin.cadmin.c_profile = PROFILE_CHOICES[tempc_admin.cadmin.c_profile]
+    if tempc_admin.cadmin.c_profile in ['s', 'd', 'f', 'q']:
+        tempc_admin.cadmin.c_profile = PROFILE_CHOICES[tempc_admin.cadmin.c_profile]
+
+    if request.method == 'POST':
+        try:
+            if request.POST['hire'] == 'T':
+                if tempc_admin.cadmin.ishiring:
+                    tempc_admin.cadmin.ishiring = False
+                else:
+                    tempc_admin.cadmin.ishiring = True
+                tempc_admin.save()
+                tempc_admin.cadmin.save()
+        except:
+            pass
+        
+        try:
+            file = request.FILES['cert']
+            tempc_admin.cadmin.cert = file
+            tempc_admin.save()
+            tempc_admin.cadmin.save()
+        except:
+            pass
+
+        try:
+            email = request.POST['email']
+            tempc_admin.cadmin.c_email = email
+            tempc_admin.save()
+            tempc_admin.cadmin.save()
+        except:
+            pass
+
+        try:
+            phone = request.POST['phone']
+            tempc_admin.cadmin.c_contactno = phone
+            tempc_admin.save()
+            tempc_admin.cadmin.save()
+        except:
+            pass
+
+        try:
+            about = request.POST['c_about']
+            print(about)
+            tempc_admin.cadmin.about = about
+            tempc_admin.save()
+            tempc_admin.cadmin.save()
+        except Exception as ex:
+            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+            message = template.format(type(ex).__name__, ex.args)
+            print (message)
+
+        try:
+            photo = request.FILES['photo']
+            tempc_admin.cadmin.photo = photo
+            tempc_admin.save()
+            tempc_admin.cadmin.save()
+        except:
+            pass
+
+    photo = tempc_admin.cadmin.photo
+
+    try:
+        img_path = os.path.join(settings.BASE_DIR, '/media/')+photo.name
+    except:
+        img_path = ""
 
     context = {
         'cadmin' : tempc_admin,
         'cv_path' : os.path.join(settings.BASE_DIR, '/media/'),
+        'img_path' : img_path,
         'student_list' : student_list
     }
     return render(request, "cadmin/index.html", context=context)

@@ -11,6 +11,9 @@
       <i class="fa fa-bell" style="color: white"></i>
     </a>
   </li>
+  <li>
+    <a class="nav-link" href="{% url 'student:chats' %}">Chats</a>
+  </li>
   {% else %}
   <li class="nav-item">
     <a class="nav-link" href="{% url 'student:register' %}">Register</a>
@@ -31,7 +34,7 @@
                     <h6 class="m-0">Recent</h6>
                 </div>
                 <div class="box-body p-0">
-                    <div class="p-3 d-flex align-items-center bg-light border-bottom osahan-post-header">
+                    <!-- <div class="p-3 d-flex align-items-center bg-light border-bottom osahan-post-header">
                         <div class="font-weight-bold mr-3">
                             <div class="text-truncate">New Company</div>
                             <div class="small">Axtria has just registered here with us</div>
@@ -49,26 +52,17 @@
                             <br />
                             <div class="text-right text-muted pt-1">1d</div>
                         </span>
-                    </div>
+                    </div> -->
+                    {% for company in company_list %}
+                    {% if company.ishiring %}
                     <div class="p-3 d-flex align-items-center osahan-post-header">
                         <div class="font-weight-bold mr-3">
-                            <div class="mb-2">Facebook is hiring</div>
-                            <button type="button" class="btn btn-outline-success btn-sm">Apply now</button>
+                            <div class="mb-2">{{ company.c_name }} is hiring</div>
+                            <a href="{% url 'student:home' %}"><button type="button" class="btn btn-outline-success btn-sm">Apply now</button></a>
                         </div>
-                        <span class="ml-auto mb-auto">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-light btn-sm rounded" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="mdi mdi-dots-vertical"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
-                                </div>
-                            </div>
-                            <br />
-                            <div class="text-right text-muted pt-1">2d</div>
-                        </span>
                     </div>
+                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
             <div class="box shadow-sm rounded bg-white mb-3">
@@ -76,25 +70,16 @@
                     <h6 class="m-0">Earlier</h6>
                 </div>
                 <div class="box-body p-0">
+                    {% for company in company_list %}
+                    {% if not company.ishiring %}
                     <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
                         <div class="font-weight-bold mr-3">
-                            <div class="text-truncate">Google has finished hiring</div>
-                            <div class="small">Next round of hiring will start after 2 weeks. Stay tuned</div>
+                            <div class="text-truncate">{{ company.c_name }} has finished hiring</div>
+                            <div class="small">Next round of hiring will start soon. Stay tuned</div>
                         </div>
-                        <span class="ml-auto mb-auto">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-light btn-sm rounded" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="mdi mdi-dots-vertical"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
-                                </div>
-                            </div>
-                            <br />
-                            <div class="text-right text-muted pt-1">3d</div>
-                        </span>
                     </div>
+                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
         </div>

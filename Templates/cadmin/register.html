@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -23,7 +24,7 @@
           <div class="col-lg-8 col-xl-6">
             <div class="card rounded-3">
               <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/img3.webp"
+                src="{% static 'img/iitkgp.jpeg' %}"
                 class="w-100"
                 style="
                   border-top-left-radius: 0.3rem;
@@ -77,8 +78,8 @@
                   <div class="form-outline mb-4">
                     <label>Profile Options</label>
                     <select class="form-control" value="Select" name="c_profile">
-                    {% for choice in choices %}
-                        <option value={{choice.0}}>{{choice.1}}</option>
+                    {% for c_s, c_e in choices.items %}
+                      <option value={{c_s}}>{{c_e}}</option>
                     {% endfor %}
                     </select>
                   </div>

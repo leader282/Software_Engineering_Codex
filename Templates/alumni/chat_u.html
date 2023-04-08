@@ -1,0 +1,131 @@
+{% extends '../base.html' %}
+{% block title %}Alumni{% endblock %}
+{% block register_login %}
+<ul class="navbar-nav">
+  {% if alumni.is_authenticated %}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'alumni:logout' %}">Logout</a>
+  </li>
+  <li>
+    <a class="nav-link" href="{% url 'alumni:chats' %}">Chats</a>
+  </li>
+  {% else %}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'alumni:register' %}">Register</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'alumni:login' %}">Login </a>
+  </li>
+  {% endif %}
+</ul>
+{% endblock %}
+{% block main_section %}
+<div class="container bootstrap snippets bootdeys mr-5 pt-5" style="padding-left: 100px">
+    <div class="col-md-7 col-xs-12 col-md-offset-2">
+      <!-- Panel Chat -->
+      <div class="panel" id="chat">
+        <div class="panel-heading" style="text-align: center">
+          <h1 class="panel-title">
+            Chat
+          </h1>
+        </div>
+        <div class="panel-body">
+          <div class="chats">
+            {% for txt in txt_list %}
+            {% if txt|slice:"-1:" == 's' %}
+            <div class="chat chat-left">
+              <div class="chat-avatar">
+                <a
+                  class="avatar avatar-online"
+                  data-toggle="tooltip"
+                  href="#"
+                  data-placement="right"
+                  data-original-title="June Lane"
+                >
+                {% if not student.student.photo %}
+                  <img
+                    src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                    alt="avatar"
+                    class="rounded-circle img-fluid"
+                    style="width: 150px"
+                  />
+                  {% else %}
+                  <img
+                    src={{ cv_path }}{{ student.student.photo.name }}
+                    alt="avatar"
+                    class="rounded-circle img-fluid"
+                    style="width: 150px"
+                  />
+                  {% endif %}
+                  <i></i>
+                </a>
+              </div>
+              <div class="chat-body">
+                <div class="chat-content">
+                  <p>
+                    {{ txt|slice:":-2" }} <br>
+                  </p>
+                </div>
+              </div>
+            </div>
+            {% else %}
+            <div class="chat">
+              <div class="chat-avatar">
+                <a
+                  class="avatar avatar-online"
+                  data-toggle="tooltip"
+                  href="#"
+                  data-placement="right"
+                  data-original-title="June Lane"
+                >
+                {% if not alumni.alumni.photo %}
+                  <img
+                    src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                    alt="avatar"
+                    class="rounded-circle img-fluid"
+                    style="width: 150px"
+                  />
+                  {% else %}
+                  <img
+                    src={{ cv_path }}{{ alumni.alumni.photo.name }}
+                    alt="avatar"
+                    class="rounded-circle img-fluid"
+                    style="width: 150px"
+                  />
+                  {% endif %}
+                  <i></i>
+                </a>
+              </div>
+              <div class="chat-body">
+                <div class="chat-content">
+                  <p>
+                    {{ txt|slice:":-2" }} <br>
+                  </p>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="panel-footer">
+          <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Say something"
+                name="chat_alu"
+              />
+              <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit">Send</button>
+              </span>
+            </div>
+          </form>
+        </div>
+    </div>
+    <!-- End Panel Chat -->
+    </div>
+</div>
+{% endblock %}

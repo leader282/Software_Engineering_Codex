@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout
 from .models import Student, User
 from cadmin.models import Cadmin
-from alumni.models import Alumni, Feedback
+from alumni.models import Alumni, Chat
 from django.conf import settings
 import os
 
@@ -15,11 +15,46 @@ def home(request):
         student = User.objects.filter(username=request.session['username'])[0]
 
         if request.method == 'POST':
-            if len(request.FILES) > 0:
-                cv = request.FILES['cv']
-                student.student.cv = cv
+            try:
+                cv = request.FILES['cv_s']
+                student.student.cv_s = cv
                 student.save()
                 student.student.save()
+            except:
+                pass
+
+            try:
+                cv = request.FILES['cv_q']
+                student.student.cv_q = cv
+                student.save()
+                student.student.save()
+            except:
+                pass
+
+            try:
+                cv = request.FILES['cv_d']
+                student.student.cv_d = cv
+                student.save()
+                student.student.save()
+            except:
+                pass
+
+            try:
+                cv = request.FILES['cv_f']
+                student.student.cv_f = cv
+                student.save()
+                student.student.save()
+            except:
+                pass
+
+            try:
+                photo = request.FILES['photo']
+                student.student.photo = photo
+                student.save()
+                student.student.save()
+            except:
+                pass
+
             try:
                 c_apply = request.POST['c_apply']
                 company = Cadmin.objects.filter(c_name = c_apply)[0]
@@ -27,36 +62,64 @@ def home(request):
                 company.save()
             except:
                 pass
+
             try:
                 alumni = request.POST['a_apply']
-                
+                user = User.objects.filter(username=alumni)[0]
+                alumni = Alumni.objects.filter(user=user)[0]
+                chats = Chat.objects.filter(alumni=alumni, student=student.student)
+                if(len(chats) == 0):
+                    Chat.objects.create(student=student.student, alumni=alumni, text="")
+            except Exception as ex:
+                template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+                message = template.format(type(ex).__name__, ex.args)
+                print (message)
+
+            try:
+                email = request.POST['email']
+                student.student.email = email
+                student.save()
+                student.student.save()
+            except:
+                pass
+
+            try:
+                phone = request.POST['phone']
+                student.student.phone = phone
+                student.save()
+                student.student.save()
             except:
                 pass
             
-        company_list = Cadmin.objects.all()
+        company_list = Cadmin.objects.filter(isverified=True)
         for company in company_list:
-            company.c_profile = PROFILE_CHOICES[company.c_profile]
+            if company.c_profile in PROFILE_CHOICES:
+                company.c_profile = PROFILE_CHOICES[company.c_profile]
 
         alumni_list = Alumni.objects.all()
         for alumni in alumni_list:
-            alumni.a_profile = PROFILE_CHOICES[alumni.a_profile]
+            if alumni.a_profile in PROFILE_CHOICES:
+                alumni.a_profile = PROFILE_CHOICES[alumni.a_profile]
+
+        photo = student.student.photo
 
         try:
-            feedback = Feedback.objects.filter(student=student.student)[0]
+            img_path = os.path.join(settings.BASE_DIR, '/media/')+photo.name
         except:
-            feedback = ""
-
-        cv = student.student.cv
+            img_path = ""
 
         context = {
             'student' : student,
-            'cv_path' : os.path.join(settings.BASE_DIR, '/media/')+cv.name,
+            'img_path' : img_path,
+            'gen_path' : os.path.join(settings.BASE_DIR, '/media/'),
             'company_list' : company_list,
             'alumni_list' : alumni_list,
-            'feedback' : feedback
         }
         return render(request, "student/index.html", context=context)
-    except:
+    except Exception as ex:
+        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+        message = template.format(type(ex).__name__, ex.args)
+        print (message)
         return render(request, "student/index.html")
 
 def register_view(request):
@@ -105,4 +168,49 @@ def logout_view(request):
     return redirect('/')
 
 def notif_view(request):
-    return render(request, "student/notification.html")
+    student = User.objects.filter(username=request.session['username'])[0]
+    company_list = Cadmin.objects.all()
+
+    context = {
+        'student': student,
+        'company_list': company_list
+    }
+
+    return render(request, "student/notification.html", context=context)
+
+def chat_view(request):
+    student = User.objects.filter(username=request.session['username'])[0]
+    chat_list = Chat.objects.filter(student=student.student)
+
+    for chat in chat_list:
+        if chat.alumni.a_profile in PROFILE_CHOICES:
+            chat.alumni.a_profile = PROFILE_CHOICES[chat.alumni.a_profile]
+    
+    context = {
+        'chat_list' : chat_list,
+        'student': student,
+        'cv_path' : os.path.join(settings.BASE_DIR, '/media/'),
+    }
+
+    return render(request, "student/chat.html", context=context)
+
+def chat_view_alumni(request, a_id):
+    student = User.objects.filter(username=request.session['username'])[0]
+    alumni = User.objects.filter(username=a_id)[0]
+    chat = Chat.objects.filter(student=student.student, alumni=alumni.alumni)[0]
+    if request.method == 'POST':
+        text = request.POST['chat_stu']
+        text = text + '\s+'
+        chat.text = chat.text + text
+        chat.save()
+
+    txt_list = chat.text.split('+')[0:-1]
+    
+    context = {
+        'txt_list': txt_list,
+        'student': student,
+        'alumni': alumni,
+        'cv_path' : os.path.join(settings.BASE_DIR, '/media/'),
+    }
+
+    return render(request, "student/chat_u.html", context=context)

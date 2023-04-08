@@ -11,6 +11,9 @@
       <i class="fa fa-bell" style="color: white"></i>
     </a>
   </li>
+  <li>
+    <a class="nav-link" href="{% url 'student:chats' %}">Chats</a>
+  </li>
   {% else %}
   <li class="nav-item">
     <a class="nav-link" href="{% url 'student:register' %}">Register</a>
@@ -23,20 +26,52 @@
 {% endblock %}
 {% block main_section %}
 {% if student.is_authenticated %}
-<section style="background-color: #eee">
+<section>
   <h1 style="text-align: center; padding-top: 50px">Student Details</h1>
   <div class="container py-5">
     <div class="row">
       <div class="col-lg-4">
         <div class="card mb-4">
           <div class="card-body text-center">
+            {% if not student.student.photo %}
             <img
               src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
               alt="avatar"
               class="rounded-circle img-fluid"
-              style="width: 150px"
+              style="width: 250px"
             />
+            {% else %}
+            <img
+              src={{ img_path }}
+              alt="avatar"
+              class="rounded-circle img-fluid"
+              style="width: 250px"
+            />
+            {% endif %}
             <h5 class="my-3">{{ student.student.name }}</h5>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#photoModal">Upload Image</button>
+            <!-- Modal for Photo -->
+            <div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-labelledby="photoModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="photoModalLabel">Upload Photo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form enctype="multipart/form-data" method="post">
+                      {% csrf_token %}
+                      <div class="form-group">
+                        <input type="file" id="photo" name="photo" />
+                      </div>
+                      <button type="submit" class="btn btn-primary">Save</button>
+                    </form>                    
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -47,7 +82,7 @@
               <div class="col-sm-3">
                 <p class="mb-0">Full Name</p>
               </div>
-              <div class="col-sm-9">
+              <div class="col-sm-4">
                 <p class="text-muted mb-0">{{ student.student.name }}</p>
               </div>
             </div>
@@ -56,30 +91,82 @@
               <div class="col-sm-3">
                 <p class="mb-0">Email</p>
               </div>
-              <div class="col-sm-9">
+              <div class="col-sm-5">
                 <p class="text-muted mb-0">{{ student.student.email }}</p>
+              </div>
+              <div class="col-sm-3">
+                <a href="" style="color: grey" data-toggle="modal" data-target="#emailModal"><i class="fas fa-edit"></i></a>
               </div>
             </div>
             <hr />
+            <!-- Modal for Email -->
+            <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="emailModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="emailModalLabel">Change Email</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form method="post">
+                      {% csrf_token %}
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">New Email address</label>
+                        <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter new email">
+                      </div>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>                    
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="row">
               <div class="col-sm-3">
                 <p class="mb-0">Phone</p>
               </div>
-              <div class="col-sm-9">
+              <div class="col-sm-5">
                 <p class="text-muted mb-0">{{ student.student.phone }}</p>
+              </div>
+              <div class="col-sm-3">
+                <a href="" style="color: grey" data-toggle="modal" data-target="#phoneModal"><i class="fas fa-edit"></i></a>
               </div>
             </div>
             <hr />
+            <!-- Modal for Phone -->
+            <div class="modal fade" id="phoneModal" tabindex="-1" role="dialog" aria-labelledby="phoneModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="phoneModalLabel">Change Phone Number</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form method="post">
+                      {% csrf_token %}
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Phone Number</label>
+                        <input type="phone" class="form-control" id="phone" placeholder="Enter new phone number" name="phone">
+                      </div>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="row">
               <div class="col-sm-3">
-                <p class="mb-0">CV</p>
+                <p class="mb-0">CV (SOFTWARE)</p>
               </div>
-              {% if student.student.cv != "" %}
+              {% if student.student.cv_s %}
               <div class="col-sm-4">
                 <p class="text-muted mb-0">CV Uploaded</p>
               </div>
-              <a href="{{cv_path}}" target="_blank" style="margin-right: 20px">View CV</a>
-              <a href="{{cv_path}}" download>Download CV</a>
+              <a href="{{gen_path}}{{student.student.cv_s.name}}" target="_blank" style="margin-right: 20px">View CV</a>
+              <a href="{{gen_path}}{{student.student.cv_s.name}}" download>Download CV</a>
               {% else %}
               <div class="col-sm-9">
                 <p class="text-muted mb-0">No CV uploaded</p>
@@ -87,10 +174,10 @@
               {% endif %}
             </div>
             <hr />
-            {% if student.student.cv == "" %}
+            {% if not student.student.cv_s %}
             <form enctype="multipart/form-data" method="post">
               {% csrf_token %}
-              <input type="file" name="cv" />
+              <input type="file" name="cv_s" />
               <button type="submit" class="btn btn-success btn-lg mb-1">
                 Upload CV
               </button>
@@ -98,7 +185,112 @@
             {% else %}
             <form enctype="multipart/form-data" method="post">
               {% csrf_token %}
-              <input type="file" name="cv" />
+              <input type="file" name="cv_s" />
+              <button type="submit" class="btn btn-success btn-lg mb-1">
+                Edit CV
+              </button>
+            </form>
+            {% endif %}
+            <hr />
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">CV (DATA)</p>
+              </div>
+              {% if student.student.cv_d %}
+              <div class="col-sm-4">
+                <p class="text-muted mb-0">CV Uploaded</p>
+              </div>
+              <a href="{{gen_path}}{{student.student.cv_d.name}}" target="_blank" style="margin-right: 20px">View CV</a>
+              <a href="{{gen_path}}{{student.student.cv_d.name}}" download>Download CV</a>
+              {% else %}
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">No CV uploaded</p>
+              </div>
+              {% endif %}
+            </div>
+            <hr />
+            {% if not student.student.cv_d %}
+            <form enctype="multipart/form-data" method="post">
+              {% csrf_token %}
+              <input type="file" name="cv_d" />
+              <button type="submit" class="btn btn-success btn-lg mb-1">
+                Upload CV
+              </button>
+            </form>
+            {% else %}
+            <form enctype="multipart/form-data" method="post">
+              {% csrf_token %}
+              <input type="file" name="cv_d" />
+              <button type="submit" class="btn btn-success btn-lg mb-1">
+                Edit CV
+              </button>
+            </form>
+            {% endif %}
+            <hr />
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">CV (FINANCE)</p>
+              </div>
+              {% if student.student.cv_f %}
+              <div class="col-sm-4">
+                <p class="text-muted mb-0">CV Uploaded</p>
+              </div>
+              <a href="{{gen_path}}{{student.student.cv_f.name}}" target="_blank" style="margin-right: 20px">View CV</a>
+              <a href="{{gen_path}}{{student.student.cv_f.name}}" download>Download CV</a>
+              {% else %}
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">No CV uploaded</p>
+              </div>
+              {% endif %}
+            </div>
+            <hr />
+            {% if not student.student.cv_f %}
+            <form enctype="multipart/form-data" method="post">
+              {% csrf_token %}
+              <input type="file" name="cv_f" />
+              <button type="submit" class="btn btn-success btn-lg mb-1">
+                Upload CV
+              </button>
+            </form>
+            {% else %}
+            <form enctype="multipart/form-data" method="post">
+              {% csrf_token %}
+              <input type="file" name="cv_f" />
+              <button type="submit" class="btn btn-success btn-lg mb-1">
+                Edit CV
+              </button>
+            </form>
+            {% endif %}
+            <hr />
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">CV (QUANT)</p>
+              </div>
+              {% if student.student.cv_q %}
+              <div class="col-sm-4">
+                <p class="text-muted mb-0">CV Uploaded</p>
+              </div>
+              <a href="{{gen_path}}{{student.student.cv_q.name}}" target="_blank" style="margin-right: 20px">View CV</a>
+              <a href="{{gen_path}}{{student.student.cv_q.name}}" download>Download CV</a>
+              {% else %}
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">No CV uploaded</p>
+              </div>
+              {% endif %}
+            </div>
+            <hr />
+            {% if not student.student.cv_q %}
+            <form enctype="multipart/form-data" method="post">
+              {% csrf_token %}
+              <input type="file" name="cv_q" />
+              <button type="submit" class="btn btn-success btn-lg mb-1">
+                Upload CV
+              </button>
+            </form>
+            {% else %}
+            <form enctype="multipart/form-data" method="post">
+              {% csrf_token %}
+              <input type="file" name="cv_q" />
               <button type="submit" class="btn btn-success btn-lg mb-1">
                 Edit CV
               </button>
@@ -114,31 +306,52 @@
 <section>
   <h1 style="text-align: center; padding: 50px">Company Details</h1>
   <div class="container mx-auto mt-4">
-    <div class="row">
+    <div class="row" style="justify-content: center;">
+      {% if not company_list %}
+      <h3 style="padding: 50px; color: white">No Companies are available now!!</h1>
+      {% endif %}
       {% for company in company_list %}
       <div class="col-md-4 mb-4">
-        <div class="card" style="width: 18rem">
+        <div class="card" style="width: 18rem;">
+          {% if not company.photo %}
           <img
-            src="https://i.imgur.com/ZTkt4I5.jpg"
+            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
             class="card-img-top"
             alt="..."
           />
+          {% else %}
+          <img
+            src={{ gen_path }}{{ company.photo.name }}
+            class="card-img-top"
+            alt="..."
+          />
+          {% endif %}
           <div class="card-body">
             <h5 class="card-title">{{ company.c_name }}</h5>
             <h6 class="card-subtitle mb-2 text-muted">{{ company.c_email }}</h6>
             <p class="card-text">
+              <b>About:</b> {{ company.about }}
+              <br><br>
               Profile: {{ company.c_profile }}
               <br>
               Contact Number: {{ company.c_contactno }}
               <br>
               Status: {% if student.student in company.students.all %}Applied{% else %}Not Applied{% endif %}
+              <br>
+              Hiring: {% if company.ishiring %}Yes{% else %}No{% endif %}
             </p>
             <form method="post">
               {% csrf_token %}
               <input type="hidden" value={{ company.c_name }} name="c_apply" />
+              {% if company.ishiring %}
               <button type="submit" class="btn btn-success btn-lg mb-1">
                 Apply
               </button>
+              {% else %}
+              <button type="submit" class="btn btn-success btn-lg mb-1" disabled>
+                Apply
+              </button>
+              {% endif %}
             </form>
           </div>
         </div>
@@ -150,15 +363,26 @@
 <section>
   <h1 style="text-align: center; padding: 50px">Alumni Details</h1>
   <div class="container mx-auto mt-4">
-    <div class="row">
+    <div class="row" style="justify-content: center;">
+      {% if not alumni_list %}
+      <h3 style="padding: 50px; color: white">No Alumnis for now!!</h1>
+      {% endif %}
       {% for alumni in alumni_list %}
       <div class="col-md-4 mb-4">
         <div class="card" style="width: 18rem">
+          {% if not alumni.photo %}
           <img
-            src="https://i.imgur.com/ZTkt4I5.jpg"
+            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
             class="card-img-top"
             alt="..."
           />
+          {% else %}
+          <img
+            src={{ gen_path }}{{ alumni.photo.name }}
+            class="card-img-top"
+            alt="..."
+          />
+          {% endif %}
           <div class="card-body">
             <h5 class="card-title">{{ alumni.a_name }}</h5>
             <h6 class="card-subtitle mb-2 text-muted">{{ alumni.a_email }}</h6>
@@ -171,16 +395,11 @@
             </p>
             <form method="post">
               {% csrf_token %}
-              <input type="hidden" value={{ alumni }} name="a_apply" />
+              <input type="hidden" value={{ alumni.user.username }} name="a_apply" />
               <button type="submit" class="btn btn-success btn-lg mb-1">
                 Submit for Review
               </button>
             </form>
-            {% if alumni == feedback.alumni %}
-            <h3>Feedback:</h3>
-            <br>
-            <textarea cols="30" rows="10">{{feedback.text}}</textarea>
-            {% endif %}
           </div>
         </div>
       </div>

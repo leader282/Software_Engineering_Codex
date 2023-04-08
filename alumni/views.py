@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout
-from .models import Alumni, User
+from .models import Alumni, User, Chat
 from student.models import Student
 from django.conf import settings
 import os
@@ -15,14 +15,40 @@ def home(request):
             
         student_list = Student.objects.all()
 
-        temp_alumni = alumni
-        temp_alumni.alumni.a_profile = PROFILE_CHOICES[temp_alumni.alumni.a_profile]
+        if alumni.alumni.a_profile in PROFILE_CHOICES:
+            alumni.alumni.a_profile = PROFILE_CHOICES[alumni.alumni.a_profile]
+
+        if request.method == 'POST':
+            try:
+                photo = request.FILES['photo']
+                alumni.alumni.photo = photo
+                alumni.save()
+                alumni.alumni.save()
+            except:
+                pass
+
+            try:
+                email = request.POST['email']
+                alumni.alumni.a_email = email
+                alumni.save()
+                alumni.alumni.save()
+            except:
+                pass
+
+            try:
+                phone = request.POST['phone']
+                alumni.alumni.a_contactno = phone
+                alumni.save()
+                alumni.alumni.save()
+            except:
+                pass
 
         context = {
-            'alumni' : temp_alumni,
+            'alumni' : alumni,
             'cv_path' : os.path.join(settings.BASE_DIR, '/media/'),
             'student_list' : student_list
         }
+
         return render(request, "alumni/index.html", context=context)
     except:
         return render(request, "alumni/index.html")
@@ -70,3 +96,45 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('/')
+
+def chat_view(request):
+    alumni = User.objects.filter(username=request.session['username'])[0]
+    chat_list = Chat.objects.filter(alumni=alumni.alumni)
+
+    if request.method == 'POST':
+        chat = request.POST['chat_approve']
+        roll=chat
+        user = User.objects.filter(username=roll)[0]
+        student = Student.objects.filter(user=user)[0]
+        chat = Chat.objects.filter(student=student)[0]
+        chat.isactive = True
+        chat.save()
+    
+    context = {
+        'chat_list' : chat_list,
+        'cv_path' : os.path.join(settings.BASE_DIR, '/media/'),
+        'alumni': alumni
+    }
+
+    return render(request, "alumni/chat.html", context=context)
+
+def chat_view_student(request, s_id):
+    alumni = User.objects.filter(username=request.session['username'])[0]
+    student = User.objects.filter(username=s_id)[0]
+    chat = Chat.objects.filter(student=student.student, alumni=alumni.alumni)[0]
+    if request.method == 'POST':
+        text = request.POST['chat_alu']
+        text = text + '\l+'
+        chat.text = chat.text + text
+        chat.save()
+
+    txt_list = chat.text.split('+')[0:-1]
+    
+    context = {
+        'txt_list': txt_list,
+        'alumni': alumni,
+        'student': student,
+        'cv_path' : os.path.join(settings.BASE_DIR, '/media/'),
+    }
+
+    return render(request, "alumni/chat_u.html", context=context)

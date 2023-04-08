@@ -1,0 +1,84 @@
+{% extends '../base.html' %}
+{% block title %}Alumni{% endblock %}
+{% block register_login %}
+<ul class="navbar-nav">
+    {% if alumni.is_authenticated %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'alumni:logout' %}">Logout</a>
+    </li>
+    <li>
+      <a class="nav-link" href="{% url 'alumni:chats' %}">Chats</a>
+    </li>
+    {% else %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'alumni:register' %}">Register</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'alumni:login' %}">Login </a>
+    </li>
+    {% endif %}
+  </ul>
+{% endblock %}
+{% block main_section %}
+<section>
+  <h1 style="text-align: center; padding: 50px">Chats</h1>
+  {% if not chat_list %}
+    <h3 style="text-align: center; padding-top: 200px; color: grey">No Chats for now!!</h1>
+  {% endif %}
+  <div class="container mx-auto mt-4">
+    <div class="row">
+        {% for chat in chat_list %}
+        {% with student=chat.student %}
+        <div class="col-md-4 mb-4">
+          <div class="card" style="width: 23rem">
+            {% if student.photo == none %}
+            <img
+              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+              class="card-img-top"
+              alt="..."
+            />
+            {% else %}
+            <img
+              src={{ cv_path }}{{ student.photo.name }}
+              class="card-img-top"
+              alt="..."
+            />
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ student.name }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{ student.user.username }}</h6>
+              <p class="card-text">
+                Email : {{ student.email }}
+                <br>
+                {% if student.cv != "" %}
+                CV: Uploaded
+                <a href="{{cv_path}}{{ student.cv.name }}" target="_blank" style="margin-right: 20px; margin-left: 10px;">View CV</a>
+                <a href="{{cv_path}}{{ student.cv.name }}" download>Download CV</a>
+                {% else %}
+                CV : Not Uploaded
+                {% endif %}
+                <br>
+                Contact Number: {{ student.phone }}
+              </p>
+              {% if chat.isactive %}
+              <button class="btn btn-success btn-lg mb-1">
+                <a href="chat/{{ student.user.username }}" style="color: white; text-decoration:none">Go to Chat</a>
+              </button>
+              {% else %}
+              <form method="post">
+                {% csrf_token %}
+                <input type="hidden" value={{ student.user.username }} name="chat_approve" />
+                <button type="submit" class="btn btn-success btn-lg mb-1">
+                  Approve
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

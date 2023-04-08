@@ -16,16 +16,20 @@ class Alumni(models.Model):
     date_joined=models.DateTimeField(verbose_name="Date of Joining",auto_now_add=True, null=True) 
     a_contactno=models.IntegerField(blank=True,null=True)
     a_profile=models.CharField(max_length=4, choices=PROFILE_CHOICES, default='s')
+    photo=models.FileField(upload_to='files/', null=True, blank=True)
+
     def __str__(self):
-        return self.user.username
+        return self.a_name
     def has_perm(self,perm,obj=None):
         return True
     def has_module_perms(self, app_label):
         return True
 
-class Feedback(models.Model):
-    alumni = models.OneToOneField(Alumni, on_delete=models.CASCADE, null=True)
-    student = models.OneToOneField(Student, on_delete=models.CASCADE, null=True)
-    text = models.CharField(max_length=10000, blank=True)
+class Chat(models.Model):
+    alumni = models.ForeignKey(Alumni, on_delete=models.CASCADE, null=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
+    text = models.CharField(max_length=1000000, blank=True, null=True)
+    isactive = models.BooleanField(default=False)
+
     def __str__(self):
-        return self.alumni.a_name+" , "+self.student.name
+        return self.alumni.a_name + ", " + self.student.name
