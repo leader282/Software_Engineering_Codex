@@ -30,7 +30,7 @@
         {% for chat in chat_list %}
         {% with student=chat.student %}
         <div class="col-md-4 mb-4">
-          <div class="card" style="width: 23rem">
+          <div class="card" style="width: 18rem">
             {% if student.photo == none %}
             <img
               src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
@@ -50,15 +50,35 @@
               <p class="card-text">
                 Email : {{ student.email }}
                 <br>
-                {% if student.cv != "" %}
-                CV: Uploaded
-                <a href="{{cv_path}}{{ student.cv.name }}" target="_blank" style="margin-right: 20px; margin-left: 10px;">View CV</a>
-                <a href="{{cv_path}}{{ student.cv.name }}" download>Download CV</a>
-                {% else %}
-                CV : Not Uploaded
-                {% endif %}
-                <br>
-                Contact Number: {{ student.phone }}
+                {% if student.cv_s %}
+              CV (SOFTWARE):
+              <a href="{{cv_path}}{{ student.cv_s.name }}" target="_blank" style="margin-right: 20px; margin-left: 10px;">View CV</a>
+              <a href="{{cv_path}}{{ student.cv_s.name }}" download>Download CV</a>
+              <br>
+              {% endif %}
+              {% if student.cv_d %}
+              CV (DATA):
+              <a href="{{cv_path}}{{ student.cv_d.name }}" target="_blank" style="margin-right: 20px; margin-left: 10px;">View CV</a>
+              <a href="{{cv_path}}{{ student.cv_d.name }}" download>Download CV</a>
+              <br>
+              {% endif %}
+              {% if student.cv_q %}
+              CV (QUANT):
+              <a href="{{cv_path}}{{ student.cv_q.name }}" target="_blank" style="margin-right: 20px; margin-left: 10px;">View CV</a>
+              <a href="{{cv_path}}{{ student.cv_q.name }}" download>Download CV</a>
+              <br>
+              {% endif %}
+              {% if student.cv_f %}
+              CV (FINANCE):
+              <a href="{{cv_path}}{{ student.cv_f.name }}" target="_blank" style="margin-right: 20px; margin-left: 10px;">View CV</a>
+              <a href="{{cv_path}}{{ student.cv_f.name }}" download>Download CV</a>
+              <br>
+              {% endif %}
+              {% if not student.cv_s and not student.cv_d and not student.cv_f and not student.cv_q %}
+              No CV uploaded
+              <br>
+              {% endif %}
+              Contact Number: {{ student.phone }}
               </p>
               {% if chat.isactive %}
               <button class="btn btn-success btn-lg mb-1">

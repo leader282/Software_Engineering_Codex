@@ -28,7 +28,7 @@ class Alumni(models.Model):
 class Chat(models.Model):
     alumni = models.ForeignKey(Alumni, on_delete=models.CASCADE, null=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
-    text = models.CharField(max_length=1000000, blank=True, null=True)
+    text = models.CharField(max_length=1000000, blank=True, default="")
     isactive = models.BooleanField(default=False)
 
     def __str__(self):

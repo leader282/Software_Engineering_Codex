@@ -60,8 +60,14 @@ def register_view(request):
         a_id = request.POST['a_id']
         a_contactno = request.POST['a_contactno']
         password = request.POST['password']
-        apassword = request.POST['apassword']
+        cpassword = request.POST['apassword']
         a_profile = request.POST['a_profile']
+
+        if(password != cpassword):
+            return render(request, "alumni/register.html", context={'e2' : True, "choices" : PROFILE_CHOICES})
+
+        if(len(a_contactno)!=10):
+            return render(request, "alumni/register.html", context={'e1' : True, "choices" : PROFILE_CHOICES})
 
         new_user = User.objects.create(username=a_id)
         new_user.set_password(password)
@@ -89,7 +95,7 @@ def login_view(request):
             request.session['username'] = username
             return redirect('/alumni')
         else:
-            return redirect('/alumni/login')
+            return render(request, 'alumni/login.html', context={'e1' : True})
 
     return render(request, "alumni/login.html")
 
@@ -106,7 +112,8 @@ def chat_view(request):
         roll=chat
         user = User.objects.filter(username=roll)[0]
         student = Student.objects.filter(user=user)[0]
-        chat = Chat.objects.filter(student=student)[0]
+        chat = Chat.objects.filter(student=student, alumni=alumni.alumni)[0]
+        print(chat)
         chat.isactive = True
         chat.save()
     

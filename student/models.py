@@ -21,3 +21,9 @@ class Student(models.Model):
         return True
     def has_module_perms(self, app_label):
         return True
+
+class Notification(models.Model):
+    text=models.CharField(max_length=10000000, default="")
+    
+    def __str__(self):
+        return self.text[:20]

@@ -99,6 +99,9 @@ def register_view(request):
         cpassword = request.POST['cpassword']
         c_profile = request.POST['c_profile']
 
+        if(password != cpassword):
+            return render(request, "cadmin/register.html", context={'e2' : True})
+
         new_user = User.objects.create(username=c_id)
         new_user.set_password(password)
         new_cadmin = Cadmin.objects.create(user=new_user)
@@ -125,7 +128,7 @@ def login_view(request):
             request.session['username'] = username
             return redirect('/cadmin')
         else:
-            return redirect('/cadmin/login')
+            return render(request, 'cadmin/login.html', context={'e1' : True})
 
     return render(request, "cadmin/login.html")
 

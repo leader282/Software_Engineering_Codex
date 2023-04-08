@@ -391,8 +391,9 @@
               <br>
               Contact Number: {{ alumni.a_contactno }}
               <br>
-              Status: {% if student.student in company.students.all %}Submitted for Review{% else %}None{% endif %}
+              Status: {% if alumni in allowed_alumni %}Submitted for Review{% else %}None{% endif %}
             </p>
+            {% if alumni not in allowed_alumni %}
             <form method="post">
               {% csrf_token %}
               <input type="hidden" value={{ alumni.user.username }} name="a_apply" />
@@ -400,6 +401,15 @@
                 Submit for Review
               </button>
             </form>
+            {% else %}
+            <form method="post">
+              {% csrf_token %}
+              <input type="hidden" value={{ alumni.user.username }} name="a_apply" />
+              <button type="submit" class="btn btn-success btn-lg mb-1" disabled>
+                Submit for Review
+              </button>
+            </form>
+            {% endif %}
           </div>
         </div>
       </div>

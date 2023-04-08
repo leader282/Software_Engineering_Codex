@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout
-from .models import Student, User
+from .models import Student, User, Notification
 from cadmin.models import Cadmin
 from alumni.models import Alumni, Chat
 from django.conf import settings
@@ -108,12 +108,18 @@ def home(request):
         except:
             img_path = ""
 
+        chats = Chat.objects.filter(student=student.student)
+        allowed_alumni = []
+        for chat in chats:
+            allowed_alumni.append(chat.alumni)
+
         context = {
             'student' : student,
             'img_path' : img_path,
             'gen_path' : os.path.join(settings.BASE_DIR, '/media/'),
             'company_list' : company_list,
             'alumni_list' : alumni_list,
+            'allowed_alumni' : allowed_alumni
         }
         return render(request, "student/index.html", context=context)
     except Exception as ex:
@@ -159,7 +165,7 @@ def login_view(request):
             request.session['username'] = username
             return redirect('/students')
         else:
-            return redirect('/students/login')
+            return render(request, 'student/login.html', context={'e1' : True})
 
     return render(request, "student/login.html")
 
@@ -169,11 +175,13 @@ def logout_view(request):
 
 def notif_view(request):
     student = User.objects.filter(username=request.session['username'])[0]
-    company_list = Cadmin.objects.all()
+    company_list = Cadmin.objects.filter(isverified=True)
+    notif_list = Notification.objects.all()
 
     context = {
         'student': student,
-        'company_list': company_list
+        'company_list': company_list,
+        'notif_list': notif_list
     }
 
     return render(request, "student/notification.html", context=context)
